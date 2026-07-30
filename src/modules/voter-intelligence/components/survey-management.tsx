@@ -14,13 +14,17 @@ import {
   DataTable,
   type DataTableColumn,
 } from "@/components/data-table/data-table";
-import { surveyCampaigns, surveyResponses } from "@/modules/voter-intelligence/data/voter-data";
+import { useTranslation } from "@/lib/i18n/context";
+import { getSurveyCampaigns, getSurveyResponses } from "@/lib/i18n/localized-demo-data";
 import { formatVIDate, getCoverageColor } from "@/modules/voter-intelligence/lib/utils";
 import type { SurveyResponse } from "@/modules/voter-intelligence/types";
 import { SurveyCreateDialog } from "@/modules/voter-intelligence/components/survey-create-dialog";
 import { L } from "@/components/shared/localized";
 
 export function SurveyManagement() {
+  const { locale } = useTranslation();
+  const surveyCampaigns = React.useMemo(() => getSurveyCampaigns(locale), [locale]);
+  const surveyResponses = React.useMemo(() => getSurveyResponses(locale), [locale]);
   const [open, setOpen] = React.useState(false);
   const [search, setSearch] = React.useState("");
   const [page, setPage] = React.useState(1);

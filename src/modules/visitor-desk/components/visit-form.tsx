@@ -30,8 +30,10 @@ import {
   FormRow,
   FormActions,
 } from "@/components/forms/form-layout";
-import { getAllPeople } from "@/modules/people/data/people";
+import { useTranslation } from "@/lib/i18n/context";
+import { getAllPeople, getVisitById } from "@/lib/i18n/localized-demo-data";
 import type { Person } from "@/modules/people/types";
+import { visitToFormDefaults } from "@/modules/visitor-desk/lib/utils";
 import {
   VISIT_PURPOSES,
   VISITOR_TYPES,
@@ -51,18 +53,30 @@ interface VisitFormProps {
 
 export function VisitForm({ mode, initialData, visitId, personId }: VisitFormProps) {
   const router = useRouter();
+  const { locale } = useTranslation();
+  const allPeople = React.useMemo(() => getAllPeople(locale), [locale]);
+  const formDefaults = React.useMemo(() => {
+    if (mode === "edit" && visitId) {
+      const visit = getVisitById(visitId, locale);
+      if (visit) return visitToFormDefaults(visit);
+    }
+    return initialData;
+  }, [mode, visitId, locale, initialData]);
   const [query, setQuery] = React.useState("");
-  const [selectedPerson, setSelectedPerson] = React.useState<Person | null>(
-    personId ? getAllPeople().find((p) => p.id === personId) ?? null : null
-  );
-  const [letterSubmitted, setLetterSubmitted] = React.useState(initialData?.letterSubmitted ?? false);
+  const [selectedPerson, setSelectedPerson] = React.useState<Person | null>(null);
+
+  React.useEffect(() => {
+    if (personId) {
+      setSelectedPerson(allPeople.find((p) => p.id === personId) ?? null);
+    }
+  }, [personId, allPeople]);
+
+  const [letterSubmitted, setLetterSubmitted] = React.useState(formDefaults?.letterSubmitted ?? false);
   const [letterFiles, setLetterFiles] = React.useState<File[]>([]);
   const [attachments, setAttachments] = React.useState<File[]>([]);
   const [visitDate, setVisitDate] = React.useState<Date | undefined>(
-    initialData?.visitDate ? new Date(initialData.visitDate) : new Date("2026-07-25")
+    formDefaults?.visitDate ? new Date(formDefaults.visitDate) : new Date("2026-07-25")
   );
-
-  const allPeople = getAllPeople();
 
   const searchResults = React.useMemo(() => {
     if (!query || query.length < 2) return [];
@@ -162,7 +176,7 @@ export function VisitForm({ mode, initialData, visitId, personId }: VisitFormPro
             <CardContent>
               <FormSection>
                 <FormField label="Visitor Type" required>
-                  <Select defaultValue={initialData?.visitorType ?? "walk-in"}>
+                  <Select defaultValue={formDefaults?.visitorType ?? "walk-in"}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
                       {VISITOR_TYPES.map((t) => (
@@ -172,7 +186,7 @@ export function VisitForm({ mode, initialData, visitId, personId }: VisitFormPro
                   </Select>
                 </FormField>
                 <FormField label="Purpose" required>
-                  <Select defaultValue={initialData?.purpose ?? undefined}>
+                  <Select defaultValue={formDefaults?.purpose ?? undefined}>
                     <SelectTrigger><SelectValue placeholder="Select purpose" /></SelectTrigger>
                     <SelectContent>
                       {VISIT_PURPOSES.map((p) => (
@@ -182,7 +196,7 @@ export function VisitForm({ mode, initialData, visitId, personId }: VisitFormPro
                   </Select>
                 </FormField>
                 <FormField label="Priority">
-                  <Select defaultValue={initialData?.priority ?? "normal"}>
+                  <Select defaultValue={formDefaults?.priority ?? "normal"}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
                       {VISIT_PRIORITIES.map((p) => (
@@ -192,7 +206,7 @@ export function VisitForm({ mode, initialData, visitId, personId }: VisitFormPro
                   </Select>
                 </FormField>
                 <FormField label="Meeting With">
-                  <Select defaultValue={initialData?.meetingWith ?? undefined}>
+                  <Select defaultValue={formDefaults?.meetingWith ?? undefined}>
                     <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
                     <SelectContent>
                       {MEETING_WITH.map((m) => (
@@ -202,7 +216,7 @@ export function VisitForm({ mode, initialData, visitId, personId }: VisitFormPro
                   </Select>
                 </FormField>
                 <FormField label="Assigned Staff" required>
-                  <Select defaultValue={initialData?.assignedStaff ?? undefined}>
+                  <Select defaultValue={formDefaults?.assignedStaff ?? undefined}>
                     <SelectTrigger><SelectValue placeholder="Select staff" /></SelectTrigger>
                     <SelectContent>
                       {STAFF_MEMBERS.map((s) => (
@@ -215,10 +229,10 @@ export function VisitForm({ mode, initialData, visitId, personId }: VisitFormPro
                   <DatePicker value={visitDate} onChange={setVisitDate} />
                 </FormField>
                 <FormField label="Visit Time" htmlFor="visitTime">
-                  <Input id="visitTime" type="time" defaultValue={initialData?.visitTime ?? "10:00"} />
+                  <Input id="visitTime" type="time" defaultValue={formDefaults?.visitTime ?? "10:00"} />
                 </FormField>
                 <FormField label="Status">
-                  <Select defaultValue={initialData?.status ?? "waiting"}>
+                  <Select defaultValue={formDefaults?.status ?? "waiting"}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
                       {VISIT_STATUSES.map((s) => (
@@ -253,7 +267,7 @@ export function VisitForm({ mode, initialData, visitId, personId }: VisitFormPro
               {letterSubmitted && (
                 <div className="space-y-4 pl-1">
                   <FormField label="Reference Number" htmlFor="letterRef">
-                    <Input id="letterRef" defaultValue={initialData?.letterReference} placeholder="LTR/2026/00001" />
+                    <Input id="letterRef" defaultValue={formDefaults?.letterReference} placeholder="LTR/2026/00001" />
                   </FormField>
                   <FormField label="Upload Scanned Document">
                     <FileUpload
@@ -275,14 +289,14 @@ export function VisitForm({ mode, initialData, visitId, personId }: VisitFormPro
             <CardContent className="space-y-4">
               <FormField label="Internal Notes">
                 <Textarea
-                  defaultValue={initialData?.internalNotes}
+                  defaultValue={formDefaults?.internalNotes}
                   placeholder="Office staff notes (not visible to citizen)..."
                   className="min-h-[100px]"
                 />
               </FormField>
               <FormField label="Citizen Remarks">
                 <Textarea
-                  defaultValue={initialData?.citizenRemarks}
+                  defaultValue={formDefaults?.citizenRemarks}
                   placeholder="Remarks shared by the visitor..."
                   className="min-h-[80px]"
                 />

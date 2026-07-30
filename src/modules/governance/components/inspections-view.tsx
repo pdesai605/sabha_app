@@ -12,7 +12,8 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { L } from "@/components/shared/localized";
 import { DataTable, type DataTableColumn } from "@/components/data-table/data-table";
-import { inspections } from "@/modules/governance/data/governance-data";
+import { useTranslation } from "@/lib/i18n/context";
+import { getInspections } from "@/lib/i18n/localized-demo-data";
 import { formatGovDate, getInspectionStatusVariant } from "@/modules/governance/lib/utils";
 import { INSPECTION_STATUS_LABELS, GOV_TODAY } from "@/modules/governance/constants";
 import { cn } from "@/lib/utils";
@@ -24,6 +25,8 @@ import { GovernanceRowActions } from "@/modules/governance/components/governance
 type ViewMode = "calendar" | "list";
 
 export function InspectionsView() {
+  const { locale } = useTranslation();
+  const inspections = React.useMemo(() => getInspections(locale), [locale]);
   const { openDrawer, drawer } = useGovernanceDrawer();
   const [createOpen, setCreateOpen] = React.useState(false);
   const [view, setView] = React.useState<ViewMode>("list");

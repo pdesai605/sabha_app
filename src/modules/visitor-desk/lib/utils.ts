@@ -1,9 +1,10 @@
 import { format, parseISO } from "date-fns";
+import type { Locale } from "@/lib/i18n/types";
+import { getPersonById } from "@/lib/i18n/localized-demo-data";
 import type { Visit, VisitStatus, VisitPriority } from "@/modules/visitor-desk/types";
-import { getPersonById } from "@/modules/people/data/people";
 
-export function enrichVisit(visit: Visit) {
-  const person = getPersonById(visit.personId);
+export function enrichVisit(visit: Visit, locale?: Locale) {
+  const person = getPersonById(visit.personId, locale);
   if (!person) return null;
 
   return {
@@ -19,8 +20,8 @@ export function enrichVisit(visit: Visit) {
 
 export type VisitWithPerson = NonNullable<ReturnType<typeof enrichVisit>>;
 
-export function enrichVisits(visitList: Visit[]): VisitWithPerson[] {
-  return visitList.map(enrichVisit).filter((v): v is VisitWithPerson => v !== null);
+export function enrichVisits(visitList: Visit[], locale?: Locale): VisitWithPerson[] {
+  return visitList.map((v) => enrichVisit(v, locale)).filter((v): v is VisitWithPerson => v !== null);
 }
 
 export function formatVisitDate(iso: string): string {

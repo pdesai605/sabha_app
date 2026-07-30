@@ -1,6 +1,9 @@
 "use client";
 
 import * as React from "react";
+import { useSearchParams } from "next/navigation";
+import { useTranslation } from "@/lib/i18n/context";
+import { getAppointments } from "@/lib/i18n/localized-demo-data";
 import Link from "next/link";
 import { Plus, Eye, Pencil, MoreHorizontal, User, Download, RefreshCw, Printer } from "lucide-react";
 import { demoExported, demoPrinted, demoSaved } from "@/lib/demo";
@@ -22,7 +25,6 @@ import {
   type DataTableColumn,
   type SortDirection,
 } from "@/components/data-table/data-table";
-import { appointments } from "@/modules/office-desk/data/office-data";
 import { APPOINTMENT_STATUS_LABELS } from "@/modules/office-desk/constants";
 import {
   enrichAppointments,
@@ -59,7 +61,10 @@ function RowActions({
 }
 
 export function AppointmentsList() {
-  const base = React.useMemo(() => enrichAppointments(appointments), []);
+  const searchParams = useSearchParams();
+  const { locale } = useTranslation();
+  const appointments = React.useMemo(() => getAppointments(locale), [locale]);
+  const base = React.useMemo(() => enrichAppointments(appointments), [appointments]);
   const [search, setSearch] = React.useState("");
   const [page, setPage] = React.useState(1);
   const [pageSize, setPageSize] = React.useState(10);
@@ -74,6 +79,13 @@ export function AppointmentsList() {
     setSelected(row);
     setDetailOpen(true);
   };
+
+  React.useEffect(() => {
+    const id = searchParams.get("id");
+    if (!id) return;
+    const match = base.find((a) => a.id === id);
+    if (match) openDetail(match);
+  }, [searchParams, base]);
 
   const filtered = React.useMemo(() => {
     let result = base;

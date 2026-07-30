@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
 import {
   Users,
@@ -23,13 +24,9 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { L } from "@/components/shared/localized";
 import { LBadge } from "@/components/shared/localized-badge";
-import {
-  getDashboardStats,
-  getVisitsForToday,
-  visits,
-  getFollowUps,
-  VISITOR_DESK_TODAY,
-} from "@/modules/visitor-desk/data/visits";
+import { useTranslation } from "@/lib/i18n/context";
+import { getVisits, getVisitsForToday, getFollowUps } from "@/lib/i18n/localized-demo-data";
+import { getDashboardStats, VISITOR_DESK_TODAY } from "@/modules/visitor-desk/data/visits";
 import {
   enrichVisits,
   formatVisitTime,
@@ -38,23 +35,28 @@ import {
 import { STATUS_LABELS } from "@/modules/visitor-desk/constants";
 
 export function VisitorDashboard() {
+  const { locale } = useTranslation();
+  const visits = React.useMemo(() => getVisits(locale), [locale]);
   const stats = getDashboardStats();
   const todayQueue = enrichVisits(
-    getVisitsForToday()
+    getVisitsForToday(locale)
       .filter((v) => v.status === "waiting" || v.status === "in-progress")
-      .sort((a, b) => a.visitTime.localeCompare(b.visitTime))
+      .sort((a, b) => a.visitTime.localeCompare(b.visitTime)),
+    locale
   );
   const upcoming = enrichVisits(
     visits
       .filter((v) => v.status === "scheduled" && v.visitDate >= VISITOR_DESK_TODAY)
-      .slice(0, 5)
+      .slice(0, 5),
+    locale
   );
   const recent = enrichVisits(
     [...visits]
       .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
-      .slice(0, 6)
+      .slice(0, 6),
+    locale
   );
-  const followUps = getFollowUps().filter((f) => f.status === "today" || f.status === "missed").slice(0, 5);
+  const followUps = getFollowUps(locale).filter((f) => f.status === "today" || f.status === "missed").slice(0, 5);
 
   return (
     <div className="space-y-8">

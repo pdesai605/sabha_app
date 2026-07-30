@@ -78,6 +78,52 @@ export function localeTextTemplate(text: string, locale: "en" | "mr"): string {
   if (text === "Download started successfully.") return "डाउनलोड सुरू झाले.";
   if (text === "Profile link copied to clipboard.") return "प्रोफाइल दुवा क्लिपबोर्डवर कॉपी केला.";
   if (text === "Person archived successfully.") return "व्यक्ती संग्रहित केली.";
+
+  const visitorsToday = text.match(/^([\d,]+) visitors expected today$/);
+  if (visitorsToday) {
+    return toMarathiNumerals(`${visitorsToday[1]} भेटदार आज अपेक्षित`);
+  }
+  const meetingsScheduled = text.match(/^([\d,]+) meetings scheduled$/);
+  if (meetingsScheduled) {
+    return toMarathiNumerals(`${meetingsScheduled[1]} बैठका नियोजित`);
+  }
+  const complaintsAttention = text.match(/^([\d,]+) complaints require attention$/);
+  if (complaintsAttention) {
+    return toMarathiNumerals(`${complaintsAttention[1]} तक्रारींकडे लक्ष देणे आवश्यक`);
+  }
+  const birthdaysToday = text.match(/^([\d,]+) birthdays today$/);
+  if (birthdaysToday) {
+    return toMarathiNumerals(`आज ${birthdaysToday[1]} वाढदिवस`);
+  }
+  const expensesAwaiting = text.match(/^₹([\d,]+) expenses awaiting approval$/);
+  if (expensesAwaiting) {
+    return toMarathiNumerals(`₹${expensesAwaiting[1]} खर्च मंजुरी प्रलंबित`);
+  }
+  const inspectionsScheduled = text.match(/^([\d,]+) inspections scheduled$/);
+  if (inspectionsScheduled) {
+    return toMarathiNumerals(`${inspectionsScheduled[1]} तपासणी नियोजित`);
+  }
+  const tenderClosing = text.match(/^([\d,]+) tender closing today$/);
+  if (tenderClosing) {
+    return toMarathiNumerals(`आज ${tenderClosing[1]} टेंडर बंद`);
+  }
+  const tendersClosing = text.match(/^([\d,]+) tenders closing today$/);
+  if (tendersClosing) {
+    return toMarathiNumerals(`आज ${tendersClosing[1]} टेंडर बंद`);
+  }
+  const lettersPending = text.match(/^([\d,]+) letters pending signature$/);
+  if (lettersPending) {
+    return toMarathiNumerals(`${lettersPending[1]} पत्रे स्वाक्षरी प्रलंबित`);
+  }
+  const trendUp = text.match(/^\+([\d,]+) from yesterday$/);
+  if (trendUp) {
+    return toMarathiNumerals(`+${trendUp[1]} कालच्या दिवसापेक्षा`);
+  }
+  const trendDown = text.match(/^(-[\d,]+) from yesterday$/);
+  if (trendDown) {
+    return toMarathiNumerals(`${trendDown[1]} कालच्या दिवसापेक्षा`);
+  }
+
   return toMarathiNumerals(localeText(text, "mr"));
 }
 

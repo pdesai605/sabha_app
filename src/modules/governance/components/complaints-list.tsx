@@ -12,7 +12,8 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { L } from "@/components/shared/localized";
 import { DataTable, DataTableCard, type DataTableColumn } from "@/components/data-table/data-table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { publicComplaints } from "@/modules/governance/data/governance-data";
+import { useTranslation } from "@/lib/i18n/context";
+import { getPublicComplaints } from "@/lib/i18n/localized-demo-data";
 import { formatGovDate, getComplaintStatusVariant, getComplaintPriorityVariant } from "@/modules/governance/lib/utils";
 import { COMPLAINT_STATUS_LABELS, COMPLAINT_CATEGORIES } from "@/modules/governance/constants";
 import type { PublicComplaint, ComplaintCategory } from "@/modules/governance/types";
@@ -38,6 +39,8 @@ function RowActions({
 }
 
 export function ComplaintsList() {
+  const { locale } = useTranslation();
+  const publicComplaints = React.useMemo(() => getPublicComplaints(locale), [locale]);
   const { openDrawer, drawer } = useGovernanceDrawer();
   const [createOpen, setCreateOpen] = React.useState(false);
   const [search, setSearch] = React.useState("");

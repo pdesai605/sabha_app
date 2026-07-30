@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import { getVisitById } from "@/modules/visitor-desk/data/visits";
-import { enrichVisit } from "@/modules/visitor-desk/lib/utils";
 import { VisitDetail } from "@/modules/visitor-desk/components/visit-detail";
 
 interface VisitPageProps {
@@ -9,11 +8,7 @@ interface VisitPageProps {
 
 export default async function VisitPage({ params }: VisitPageProps) {
   const { id } = await params;
-  const visit = getVisitById(id);
-  if (!visit) notFound();
+  if (!getVisitById(id)) notFound();
 
-  const enriched = enrichVisit(visit);
-  if (!enriched) notFound();
-
-  return <VisitDetail visit={enriched} />;
+  return <VisitDetail visitId={id} />;
 }

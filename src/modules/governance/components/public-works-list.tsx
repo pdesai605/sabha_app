@@ -10,7 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { L } from "@/components/shared/localized";
 import { DataTable, DataTableCard, type DataTableColumn } from "@/components/data-table/data-table";
-import { publicWorks } from "@/modules/governance/data/governance-data";
+import { useTranslation } from "@/lib/i18n/context";
+import { getPublicWorks } from "@/lib/i18n/localized-demo-data";
 import { formatCurrencyCompact, getProjectStatusVariant, getProgressColor } from "@/modules/governance/lib/utils";
 import { PROJECT_STATUS_LABELS } from "@/modules/governance/constants";
 import type { PublicWork } from "@/modules/governance/types";
@@ -19,6 +20,8 @@ import { useGovernanceDrawer, type GovernanceDrawerTab } from "@/modules/governa
 import { GovernanceRowActions } from "@/modules/governance/components/governance-row-actions";
 
 export function PublicWorksList() {
+  const { locale } = useTranslation();
+  const publicWorks = React.useMemo(() => getPublicWorks(locale), [locale]);
   const { openDrawer, drawer } = useGovernanceDrawer();
   const [createOpen, setCreateOpen] = React.useState(false);
   const [search, setSearch] = React.useState("");

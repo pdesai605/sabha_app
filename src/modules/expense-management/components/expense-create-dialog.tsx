@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -11,7 +12,8 @@ import {
 } from "@/components/ui/select";
 import { FormLayout, FormSection, FormField } from "@/components/forms/form-layout";
 import { DemoFormDialog } from "@/components/shared/demo-form-dialog";
-import { expenseCategories, vendors } from "@/modules/expense-management/data/expense-data";
+import { useTranslation } from "@/lib/i18n/context";
+import { getExpenseCategories, getVendors } from "@/lib/i18n/localized-demo-data";
 import { WARDS } from "@/modules/people/constants";
 import { PAYMENT_MODES, DEPARTMENTS } from "@/modules/expense-management/constants";
 
@@ -22,6 +24,10 @@ export function ExpenseCreateDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
+  const { locale } = useTranslation();
+  const expenseCategories = React.useMemo(() => getExpenseCategories(locale), [locale]);
+  const vendors = React.useMemo(() => getVendors(locale), [locale]);
+
   return (
     <DemoFormDialog
       open={open}

@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { useTranslation } from "@/lib/i18n/context";
+import { getInwardLetters } from "@/lib/i18n/localized-demo-data";
 import { demoSuccess, demoExported, demoImported, demoPrinted, demoAssigned, demoWhatsAppSent, demoSaved, demoDeleted } from "@/lib/demo";
 import Link from "next/link";
 import {
@@ -21,7 +23,6 @@ import {
 import {
   InwardFiltersDrawer, applyInwardFilters, type InwardFilters,
 } from "@/modules/letters-documents/components/inward-filters-drawer";
-import { inwardLetters } from "@/modules/letters-documents/data/letters-data";
 import {
   formatLetterDate, getPriorityVariant, getInwardStatusVariant,
 } from "@/modules/letters-documents/lib/utils";
@@ -50,6 +51,8 @@ function RowActions({ row }: { row: InwardLetter }) {
 }
 
 export function InwardLettersList() {
+  const { locale } = useTranslation();
+  const inwardLetters = React.useMemo(() => getInwardLetters(locale), [locale]);
   const [createOpen, setCreateOpen] = React.useState(false);
   const [search, setSearch] = React.useState("");
   const [page, setPage] = React.useState(1);

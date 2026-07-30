@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
 import {
   Wallet,
@@ -21,12 +22,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { useTranslation } from "@/lib/i18n/context";
+import { getExpenses, getBudgets } from "@/lib/i18n/localized-demo-data";
 import {
-  expenses,
   getDashboardStats,
   getPendingApprovals,
   monthlyTrend,
-  budgets,
 } from "@/modules/expense-management/data/expense-data";
 import {
   formatCurrency,
@@ -46,6 +47,9 @@ const quickActions = [
 ];
 
 export function ExpenseDashboard() {
+  const { locale } = useTranslation();
+  const expenses = React.useMemo(() => getExpenses(locale), [locale]);
+  const budgets = React.useMemo(() => getBudgets(locale), [locale]);
   const stats = getDashboardStats();
   const recentExpenses = expenses.slice(0, 8);
   const pendingApprovals = getPendingApprovals().slice(0, 6);

@@ -9,7 +9,8 @@ import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { L } from "@/components/shared/localized";
 import { DataTable, DataTableCard, type DataTableColumn } from "@/components/data-table/data-table";
-import { tenders } from "@/modules/governance/data/governance-data";
+import { useTranslation } from "@/lib/i18n/context";
+import { getTenders } from "@/lib/i18n/localized-demo-data";
 import { formatGovDate, formatCurrencyCompact, getTenderStatusVariant } from "@/modules/governance/lib/utils";
 import { TENDER_STATUS_LABELS } from "@/modules/governance/constants";
 import type { Tender } from "@/modules/governance/types";
@@ -18,6 +19,8 @@ import { useGovernanceDrawer, type GovernanceDrawerTab } from "@/modules/governa
 import { GovernanceRowActions } from "@/modules/governance/components/governance-row-actions";
 
 export function TendersList() {
+  const { locale } = useTranslation();
+  const tenders = React.useMemo(() => getTenders(locale), [locale]);
   const { openDrawer, drawer } = useGovernanceDrawer();
   const [createOpen, setCreateOpen] = React.useState(false);
   const [search, setSearch] = React.useState("");

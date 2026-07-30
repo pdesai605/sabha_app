@@ -8,11 +8,9 @@ interface PersonPageProps {
 
 export default async function PersonPage({ params }: PersonPageProps) {
   const { id } = await params;
-  const person = getPersonById(id);
-
-  if (!person) {
+  if (!getPersonById(id)) {
     notFound();
   }
 
-  return <PersonDetail person={person} />;
+  return <PersonDetail personId={id} />;
 }

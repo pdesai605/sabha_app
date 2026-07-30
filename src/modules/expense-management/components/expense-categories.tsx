@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { useTranslation } from "@/lib/i18n/context";
+import { getExpenseCategories } from "@/lib/i18n/localized-demo-data";
 import { demoSuccess, demoExported, demoImported, demoPrinted, demoAssigned, demoWhatsAppSent, demoSaved, demoDeleted } from "@/lib/demo";
 import { Plus, Pencil, Trash2, MoreHorizontal } from "lucide-react";
 import { toast } from "@/components/ui/sonner";
@@ -26,11 +28,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { expenseCategories } from "@/modules/expense-management/data/expense-data";
 import { formatCurrency } from "@/modules/expense-management/lib/utils";
 import type { ExpenseCategory } from "@/modules/expense-management/types";
 
 export function ExpenseCategoriesList() {
+  const { locale } = useTranslation();
+  const expenseCategories = React.useMemo(() => getExpenseCategories(locale), [locale]);
   const [categories, setCategories] = React.useState(expenseCategories);
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [editing, setEditing] = React.useState<ExpenseCategory | null>(null);

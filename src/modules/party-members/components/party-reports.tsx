@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import {
   Download,
   Printer,
@@ -18,72 +19,74 @@ import { PageHeader } from "@/components/layout/page-header";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { partyMembers, getMembersByOrg } from "@/modules/party-members/data/members";
+import { useTranslation } from "@/lib/i18n/context";
+import { getPartyMembers, getMembersByOrg } from "@/lib/i18n/localized-demo-data";
 import { WARDS } from "@/modules/people/constants";
 import { ORGANIZATION_LABELS } from "@/modules/party-members/constants";
 import type { OrganizationType } from "@/modules/party-members/types";
 
-const reports = [
-  {
-    id: "by-ward",
-    title: "Members by Ward",
-    description: "Distribution of members across all wards in the constituency.",
-    icon: MapPin,
-    count: WARDS.length,
-    unit: "wards",
-  },
-  {
-    id: "by-booth",
-    title: "Members by Booth",
-    description: "Booth-level member coverage and gaps analysis.",
-    icon: Vote,
-    count: 10,
-    unit: "booths",
-  },
-  {
-    id: "by-org",
-    title: "Members by Organization",
-    description: "Breakdown across corporation, panchayat, party, morcha, and committees.",
-    icon: Building2,
-    count: 5,
-    unit: "organizations",
-  },
-  {
-    id: "by-designation",
-    title: "Members by Designation",
-    description: "Role distribution across the political hierarchy.",
-    icon: Award,
-    count: new Set(partyMembers.map((m) => m.designation)).size,
-    unit: "designations",
-  },
-  {
-    id: "new-members",
-    title: "New Members",
-    description: "Members who joined in the current calendar year.",
-    icon: UserPlus,
-    count: partyMembers.filter((m) => m.joiningDate.startsWith("2026")).length,
-    unit: "members",
-  },
-  {
-    id: "inactive",
-    title: "Inactive Members",
-    description: "Members with inactive or pending status requiring attention.",
-    icon: UserX,
-    count: partyMembers.filter((m) => m.status !== "active").length,
-    unit: "members",
-  },
-];
-
-function getOrgBreakdown() {
-  return (Object.keys(ORGANIZATION_LABELS) as OrganizationType[]).map((org) => ({
-    label: ORGANIZATION_LABELS[org],
-    count: getMembersByOrg(org).length,
-    active: getMembersByOrg(org).filter((m) => m.status === "active").length,
-  }));
-}
-
 export function PartyReports() {
-  const orgBreakdown = getOrgBreakdown();
+  const { locale } = useTranslation();
+  const partyMembers = React.useMemo(() => getPartyMembers(locale), [locale]);
+
+  const reports = React.useMemo(() => [
+    {
+      id: "by-ward",
+      title: "Members by Ward",
+      description: "Distribution of members across all wards in the constituency.",
+      icon: MapPin,
+      count: WARDS.length,
+      unit: "wards",
+    },
+    {
+      id: "by-booth",
+      title: "Members by Booth",
+      description: "Booth-level member coverage and gaps analysis.",
+      icon: Vote,
+      count: 10,
+      unit: "booths",
+    },
+    {
+      id: "by-org",
+      title: "Members by Organization",
+      description: "Breakdown across corporation, panchayat, party, morcha, and committees.",
+      icon: Building2,
+      count: 5,
+      unit: "organizations",
+    },
+    {
+      id: "by-designation",
+      title: "Members by Designation",
+      description: "Role distribution across the political hierarchy.",
+      icon: Award,
+      count: new Set(partyMembers.map((m) => m.designation)).size,
+      unit: "designations",
+    },
+    {
+      id: "new-members",
+      title: "New Members",
+      description: "Members who joined in the current calendar year.",
+      icon: UserPlus,
+      count: partyMembers.filter((m) => m.joiningDate.startsWith("2026")).length,
+      unit: "members",
+    },
+    {
+      id: "inactive",
+      title: "Inactive Members",
+      description: "Members with inactive or pending status requiring attention.",
+      icon: UserX,
+      count: partyMembers.filter((m) => m.status !== "active").length,
+      unit: "members",
+    },
+  ], [partyMembers]);
+
+  const orgBreakdown = React.useMemo(() =>
+    (Object.keys(ORGANIZATION_LABELS) as OrganizationType[]).map((org) => ({
+      label: ORGANIZATION_LABELS[org],
+      count: getMembersByOrg(org, locale).length,
+      active: getMembersByOrg(org, locale).filter((m) => m.status === "active").length,
+    })),
+  [locale]);
   const maxCount = Math.max(...orgBreakdown.map((o) => o.count));
 
   return (

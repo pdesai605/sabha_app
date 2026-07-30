@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { useTranslation } from "@/lib/i18n/context";
+import { getExpenses } from "@/lib/i18n/localized-demo-data";
 import { demoApproved, demoRejected } from "@/lib/demo";
 import { CheckCircle2, XCircle, Clock, MessageSquare } from "lucide-react";
 import { PageHeader } from "@/components/layout/page-header";
@@ -14,7 +16,6 @@ import {
   DataTable,
   type DataTableColumn,
 } from "@/components/data-table/data-table";
-import { expenses } from "@/modules/expense-management/data/expense-data";
 import {
   formatCurrency,
   formatExpenseDate,
@@ -25,6 +26,8 @@ import { ExpenseDetailDrawer } from "@/modules/expense-management/components/exp
 import type { Expense } from "@/modules/expense-management/types";
 
 export function ApprovalsList() {
+  const { locale } = useTranslation();
+  const expenses = React.useMemo(() => getExpenses(locale), [locale]);
   const [search, setSearch] = React.useState("");
   const [page, setPage] = React.useState(1);
   const [tab, setTab] = React.useState<"pending" | "approved" | "rejected">("pending");

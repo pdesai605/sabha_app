@@ -24,7 +24,8 @@ import {
   FormActions,
 } from "@/components/forms/form-layout";
 import type { PartyMember } from "@/modules/party-members/types";
-import { getPersonById } from "@/modules/people/data/people";
+import { useTranslation } from "@/lib/i18n/context";
+import { getPersonById } from "@/lib/i18n/localized-demo-data";
 import {
   ORGANIZATION_LABELS,
   getDesignationsForOrg,
@@ -40,7 +41,8 @@ interface EditPartyMemberFormProps {
 
 export function EditPartyMemberForm({ member }: EditPartyMemberFormProps) {
   const router = useRouter();
-  const person = getPersonById(member.personId);
+  const { locale } = useTranslation();
+  const person = getPersonById(member.personId, locale);
 
   const [orgType, setOrgType] = React.useState(member.organizationType);
   const [joiningDate, setJoiningDate] = React.useState<Date | undefined>(

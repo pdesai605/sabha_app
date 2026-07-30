@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { useTranslation } from "@/lib/i18n/context";
+import { getOfficeTasks } from "@/lib/i18n/localized-demo-data";
 import { Plus, MessageSquare, LayoutGrid, List } from "lucide-react";
 import { PageHeader } from "@/components/layout/page-header";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
@@ -10,7 +12,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { L } from "@/components/shared/localized";
-import { officeTasks } from "@/modules/office-desk/data/office-data";
 import { formatOfficeDate, getTaskStatusVariant, getTaskPriorityVariant } from "@/modules/office-desk/lib/utils";
 import { TASK_STATUS_LABELS } from "@/modules/office-desk/constants";
 import { TaskDetailDrawer } from "@/modules/office-desk/components/task-detail-drawer";
@@ -47,6 +48,8 @@ function TaskCard({ task, onOpen }: { task: OfficeTask; onOpen: (t: OfficeTask) 
 }
 
 export function TasksBoard() {
+  const { locale } = useTranslation();
+  const officeTasks = React.useMemo(() => getOfficeTasks(locale), [locale]);
   const [view, setView] = React.useState<ViewMode>("board");
   const [statusFilter, setStatusFilter] = React.useState<TaskStatus | "all">("all");
   const [selectedTask, setSelectedTask] = React.useState<OfficeTask | null>(null);

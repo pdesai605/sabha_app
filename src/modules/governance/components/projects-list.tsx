@@ -32,7 +32,8 @@ import {
   type DataTableColumn,
   type SortDirection,
 } from "@/components/data-table/data-table";
-import { developmentProjects } from "@/modules/governance/data/governance-data";
+import { useTranslation } from "@/lib/i18n/context";
+import { getDevelopmentProjects } from "@/lib/i18n/localized-demo-data";
 import {
   formatGovDate,
   formatCurrencyCompact,
@@ -70,6 +71,8 @@ function RowActions({
 }
 
 export function ProjectsList() {
+  const { locale } = useTranslation();
+  const developmentProjects = React.useMemo(() => getDevelopmentProjects(locale), [locale]);
   const { openDrawer, drawer } = useGovernanceDrawer();
   const [createOpen, setCreateOpen] = React.useState(false);
   const [search, setSearch] = React.useState("");
@@ -127,7 +130,7 @@ export function ProjectsList() {
       });
     }
     return result;
-  }, [search, sortColumn, sortDirection]);
+  }, [developmentProjects, search, sortColumn, sortDirection]);
 
   const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
 

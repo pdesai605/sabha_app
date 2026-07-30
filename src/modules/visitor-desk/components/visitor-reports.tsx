@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import {
   Download,
   Printer,
@@ -10,18 +11,23 @@ import {
   Calendar,
   BarChart3,
 } from "lucide-react";
+import { useTranslation } from "@/lib/i18n/context";
+import { getVisits } from "@/lib/i18n/localized-demo-data";
 import { toast } from "@/components/ui/sonner";
 import { demoSuccess, demoExported, demoImported, demoPrinted, demoAssigned, demoWhatsAppSent, demoSaved, demoDeleted } from "@/lib/demo";
 import { PageHeader } from "@/components/layout/page-header";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { visits } from "@/modules/visitor-desk/data/visits";
 import { VISIT_PURPOSES } from "@/modules/visitor-desk/constants";
 import { WARDS, AREAS } from "@/modules/people/constants";
 import { enrichVisits } from "@/modules/visitor-desk/lib/utils";
 
-const reports = [
+export function VisitorReports() {
+  const { locale } = useTranslation();
+  const visits = React.useMemo(() => getVisits(locale), [locale]);
+
+  const reports = [
   {
     id: "by-ward",
     title: "Visitors by Ward",
@@ -74,15 +80,15 @@ const reports = [
     getCount: () => new Set(visits.map((v) => v.visitDate.slice(0, 7))).size,
     unit: "months",
   },
-];
+  ];
 
-export function VisitorReports() {
-  const enriched = enrichVisits(visits);
-  const purposeBreakdown = VISIT_PURPOSES.map((p) => ({
-    label: p,
-    count: enriched.filter((v) => v.purpose === p).length,
-  }));
-  const maxPurpose = Math.max(...purposeBreakdown.map((p) => p.count));
+  const enriched = enrichVisits(visits, locale);
+  const purposeBreakdown = enriched.reduce<Record<string, number>>((acc, v) => {
+    acc[v.purpose] = (acc[v.purpose] ?? 0) + 1;
+    return acc;
+  }, {});
+  const purposeEntries = Object.entries(purposeBreakdown).map(([label, count]) => ({ label, count }));
+  const maxPurpose = Math.max(...purposeEntries.map((p) => p.count), 0);
 
   return (
     <div className="space-y-6">
@@ -146,7 +152,7 @@ export function VisitorReports() {
           <CardDescription>Distribution across {visits.length} total visits</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {purposeBreakdown.map((p) => (
+          {purposeEntries.map((p) => (
             <div key={p.label} className="space-y-1.5">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-text-secondary">{p.label}</span>

@@ -36,7 +36,8 @@ import {
 } from "@/components/data-table/data-table";
 import type { OrganizationType, PartyMemberWithPerson } from "@/modules/party-members/types";
 import { defaultPartyMembersFilters } from "@/modules/party-members/types";
-import { partyMembers, getMembersByOrg } from "@/modules/party-members/data/members";
+import { useTranslation } from "@/lib/i18n/context";
+import { getPartyMembers, getMembersByOrg } from "@/lib/i18n/localized-demo-data";
 import { ORGANIZATION_LABELS } from "@/modules/party-members/constants";
 import {
   PartyMembersFiltersDrawer,
@@ -128,12 +129,14 @@ export function PartyMembersList({
     ? ORGANIZATION_LABELS[organizationType]
     : "Party Members";
 
+  const { locale } = useTranslation();
+
   const baseMembers = React.useMemo(() => {
     const raw = organizationType
-      ? getMembersByOrg(organizationType)
-      : partyMembers;
-    return enrichMembers(raw);
-  }, [organizationType]);
+      ? getMembersByOrg(organizationType, locale)
+      : getPartyMembers(locale);
+    return enrichMembers(raw, locale);
+  }, [organizationType, locale]);
 
   const [search, setSearch] = React.useState("");
   const [filters, setFilters] = React.useState(defaultPartyMembersFilters);

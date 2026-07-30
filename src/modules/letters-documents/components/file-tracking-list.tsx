@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { useTranslation } from "@/lib/i18n/context";
+import { getOfficeFiles } from "@/lib/i18n/localized-demo-data";
 import { demoSuccess, demoExported, demoImported, demoPrinted, demoAssigned, demoWhatsAppSent, demoSaved, demoDeleted } from "@/lib/demo";
 import Link from "next/link";
 import { Plus, Clock, User } from "lucide-react";
@@ -20,7 +22,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Timeline } from "@/components/ui/timeline";
-import { officeFiles } from "@/modules/letters-documents/data/letters-data";
 import {
   formatLetterDate,
   getPriorityVariant,
@@ -30,6 +31,8 @@ import { FILE_STATUS_LABELS } from "@/modules/letters-documents/constants";
 import type { OfficeFile } from "@/modules/letters-documents/types";
 
 export function FileTrackingList() {
+  const { locale } = useTranslation();
+  const officeFiles = React.useMemo(() => getOfficeFiles(locale), [locale]);
   const [selected, setSelected] = React.useState<OfficeFile | null>(null);
   const [search, setSearch] = React.useState("");
 

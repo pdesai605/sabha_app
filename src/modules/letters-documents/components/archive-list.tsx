@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { useTranslation } from "@/lib/i18n/context";
+import { getArchivedDocuments } from "@/lib/i18n/localized-demo-data";
 import { demoSuccess, demoExported, demoImported, demoPrinted, demoAssigned, demoWhatsAppSent, demoSaved, demoDeleted } from "@/lib/demo";
 import { LayoutGrid, List, Download } from "lucide-react";
 import { toast } from "@/components/ui/sonner";
@@ -15,7 +17,6 @@ import {
   DataTable,
   type DataTableColumn,
 } from "@/components/data-table/data-table";
-import { archivedDocuments } from "@/modules/letters-documents/data/letters-data";
 import { formatLetterDate } from "@/modules/letters-documents/lib/utils";
 import { GOVT_DEPARTMENTS } from "@/modules/letters-documents/constants";
 import type { ArchivedDocument } from "@/modules/letters-documents/types";
@@ -25,6 +26,8 @@ type ViewMode = "cards" | "table";
 const YEARS = [2026, 2025, 2024, 2023, 2022];
 
 export function ArchiveList() {
+  const { locale } = useTranslation();
+  const archivedDocuments = React.useMemo(() => getArchivedDocuments(locale), [locale]);
   const [view, setView] = React.useState<ViewMode>("cards");
   const [search, setSearch] = React.useState("");
   const [year, setYear] = React.useState<number | "all">("all");

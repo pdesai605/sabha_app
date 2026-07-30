@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { useTranslation } from "@/lib/i18n/context";
+import { getOutwardLetters } from "@/lib/i18n/localized-demo-data";
 import { demoSuccess, demoExported, demoImported, demoPrinted, demoAssigned, demoWhatsAppSent, demoSaved, demoDeleted } from "@/lib/demo";
 import Link from "next/link";
 import { Plus, MoreHorizontal, Eye, Pencil, Printer, Download, RefreshCw } from "lucide-react";
@@ -14,7 +16,6 @@ import {
 import {
   DataTable, DataTableCard, type DataTableColumn,
 } from "@/components/data-table/data-table";
-import { outwardLetters } from "@/modules/letters-documents/data/letters-data";
 import { formatLetterDate, getOutwardStatusVariant } from "@/modules/letters-documents/lib/utils";
 import { OUTWARD_STATUS_LABELS } from "@/modules/letters-documents/constants";
 import type { OutwardLetter } from "@/modules/letters-documents/types";
@@ -37,6 +38,8 @@ function RowActions({ row }: { row: OutwardLetter }) {
 }
 
 export function OutwardLettersList() {
+  const { locale } = useTranslation();
+  const outwardLetters = React.useMemo(() => getOutwardLetters(locale), [locale]);
   const [createOpen, setCreateOpen] = React.useState(false);
   const [search, setSearch] = React.useState("");
   const [page, setPage] = React.useState(1);

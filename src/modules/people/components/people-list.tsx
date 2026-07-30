@@ -32,7 +32,9 @@ import {
   type DataTableColumn,
   type SortDirection,
 } from "@/components/data-table/data-table";
-import { people } from "@/modules/people/data/people";
+import { useTranslation } from "@/lib/i18n/context";
+import { getPeople } from "@/lib/i18n/localized-demo-data";
+import { people as canonicalPeople } from "@/modules/people/data/people";
 import type { Person } from "@/modules/people/types";
 import { defaultPeopleFilters, type PeopleFilters } from "@/modules/people/types";
 import {
@@ -153,6 +155,7 @@ function sortPeople(
 }
 
 export function PeopleList() {
+  const { locale } = useTranslation();
   const [search, setSearch] = React.useState("");
   const [filters, setFilters] = React.useState<PeopleFilters>(defaultPeopleFilters);
   const [filtersOpen, setFiltersOpen] = React.useState(false);
@@ -167,7 +170,10 @@ export function PeopleList() {
   const activeFilterCount = countActiveFilters(filters);
 
   const filtered = React.useMemo(() => {
-    let result = applyPeopleFilters(people, filters);
+    const matchingIds = new Set(
+      applyPeopleFilters(canonicalPeople, filters).map((p) => p.id)
+    );
+    let result = getPeople(locale).filter((p) => matchingIds.has(p.id));
     if (search) {
       const q = search.toLowerCase();
       result = result.filter(
@@ -181,7 +187,7 @@ export function PeopleList() {
       );
     }
     return sortPeople(result, sortColumn, sortDirection);
-  }, [filters, search, sortColumn, sortDirection]);
+  }, [locale, filters, search, sortColumn, sortDirection]);
 
   const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
 

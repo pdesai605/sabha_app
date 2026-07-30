@@ -7,7 +7,8 @@ import { PageHeader } from "@/components/layout/page-header";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { organizationHierarchy } from "@/modules/party-members/data/members";
+import { useTranslation } from "@/lib/i18n/context";
+import { getOrganizationHierarchy } from "@/lib/i18n/localized-demo-data";
 import type { HierarchyNode } from "@/modules/party-members/types";
 import { cn } from "@/lib/utils";
 
@@ -133,6 +134,9 @@ function HierarchyTreeNode({
 }
 
 export function OrganizationHierarchy() {
+  const { locale } = useTranslation();
+  const organizationHierarchy = React.useMemo(() => getOrganizationHierarchy(locale), [locale]);
+
   return (
     <div className="space-y-6">
       <Breadcrumb

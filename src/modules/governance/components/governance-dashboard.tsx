@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
 import {
   FolderKanban,
@@ -22,15 +23,16 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { L } from "@/components/shared/localized";
+import { useTranslation } from "@/lib/i18n/context";
 import {
-  getDashboardStats,
   getUpcomingInspections,
   getLatestProjects,
-  publicComplaints,
-  governmentSchemes,
-  wardProjectSummaries,
-  recentActivities,
-} from "@/modules/governance/data/governance-data";
+  getPublicComplaints,
+  getGovernmentSchemes,
+  getWardProjectSummaries,
+  getGovRecentActivities,
+} from "@/lib/i18n/localized-demo-data";
+import { getDashboardStats } from "@/modules/governance/data/governance-data";
 import {
   formatGovDate,
   formatGovDateTime,
@@ -50,9 +52,14 @@ const quickActions = [
 ];
 
 export function GovernanceDashboard() {
+  const { locale } = useTranslation();
   const stats = getDashboardStats();
-  const upcomingInspections = getUpcomingInspections();
-  const latestProjects = getLatestProjects();
+  const upcomingInspections = React.useMemo(() => getUpcomingInspections(undefined, locale), [locale]);
+  const latestProjects = React.useMemo(() => getLatestProjects(undefined, locale), [locale]);
+  const publicComplaints = React.useMemo(() => getPublicComplaints(locale), [locale]);
+  const governmentSchemes = React.useMemo(() => getGovernmentSchemes(locale), [locale]);
+  const wardProjectSummaries = React.useMemo(() => getWardProjectSummaries(locale), [locale]);
+  const recentActivities = React.useMemo(() => getGovRecentActivities(locale), [locale]);
   const recentComplaints = publicComplaints.slice(0, 6);
   const topSchemes = governmentSchemes.filter((s) => s.status === "active").slice(0, 5);
 

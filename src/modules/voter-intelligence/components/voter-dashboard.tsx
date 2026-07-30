@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
 import {
   Users,
@@ -21,12 +22,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { useTranslation } from "@/lib/i18n/context";
+import { getTopBooths, getUpcomingCampaigns, getBooths } from "@/lib/i18n/localized-demo-data";
 import {
   getDashboardStats,
-  getTopBooths,
-  getUpcomingCampaigns,
   getOverallSurveyCompletion,
-  booths,
 } from "@/modules/voter-intelligence/data/voter-data";
 import {
   formatVIDate,
@@ -36,10 +36,12 @@ import {
 import { CAMPAIGN_STATUS_LABELS } from "@/modules/voter-intelligence/constants";
 
 export function VoterDashboard() {
+  const { locale } = useTranslation();
   const stats = getDashboardStats();
-  const topBooths = getTopBooths(5);
-  const upcomingCampaigns = getUpcomingCampaigns();
+  const topBooths = React.useMemo(() => getTopBooths(5, locale), [locale]);
+  const upcomingCampaigns = React.useMemo(() => getUpcomingCampaigns(locale), [locale]);
   const surveyCompletion = getOverallSurveyCompletion();
+  const booths = React.useMemo(() => getBooths(locale), [locale]);
   const maxCoverage = Math.max(...booths.map((b) => b.coveragePercent));
 
   return (

@@ -10,7 +10,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { L } from "@/components/shared/localized";
 import { DataTable, type DataTableColumn } from "@/components/data-table/data-table";
-import { governmentSchemes } from "@/modules/governance/data/governance-data";
+import { useTranslation } from "@/lib/i18n/context";
+import { getGovernmentSchemes } from "@/lib/i18n/localized-demo-data";
 import { formatCurrencyCompact, getProgressColor } from "@/modules/governance/lib/utils";
 import type { GovernmentScheme } from "@/modules/governance/types";
 import { SchemeCreateDialog } from "@/modules/governance/components/governance-create-dialogs";
@@ -20,6 +21,8 @@ import { GovernanceRowActions } from "@/modules/governance/components/governance
 type ViewMode = "cards" | "table";
 
 export function SchemesList() {
+  const { locale } = useTranslation();
+  const governmentSchemes = React.useMemo(() => getGovernmentSchemes(locale), [locale]);
   const { openDrawer, drawer } = useGovernanceDrawer();
   const [createOpen, setCreateOpen] = React.useState(false);
   const [view, setView] = React.useState<ViewMode>("cards");

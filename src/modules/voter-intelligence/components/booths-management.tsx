@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { useTranslation } from "@/lib/i18n/context";
+import { getBooths } from "@/lib/i18n/localized-demo-data";
 import { MapPin, Users, ClipboardList, Activity, ChevronRight } from "lucide-react";
 import { PageHeader } from "@/components/layout/page-header";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
@@ -14,11 +16,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { booths } from "@/modules/voter-intelligence/data/voter-data";
 import { getCoverageColor } from "@/modules/voter-intelligence/lib/utils";
 import type { Booth } from "@/modules/voter-intelligence/types";
 
 export function BoothsManagement() {
+  const { locale } = useTranslation();
+  const booths = React.useMemo(() => getBooths(locale), [locale]);
   const [selected, setSelected] = React.useState<Booth | null>(null);
 
   return (

@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { useTranslation } from "@/lib/i18n/context";
+import { getVendors } from "@/lib/i18n/localized-demo-data";
 import { demoSuccess, demoExported, demoImported, demoPrinted, demoAssigned, demoWhatsAppSent, demoSaved, demoDeleted } from "@/lib/demo";
 import { Plus, Phone, Mail, MapPin, Building, MoreHorizontal, Pencil } from "lucide-react";
 import { toast } from "@/components/ui/sonner";
@@ -16,12 +18,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { vendors } from "@/modules/expense-management/data/expense-data";
 
 import { VendorCreateDialog } from "@/modules/expense-management/components/vendor-create-dialog";
 import { L } from "@/components/shared/localized";
 
 export function VendorsList() {
+  const { locale } = useTranslation();
+  const vendors = React.useMemo(() => getVendors(locale), [locale]);
   const [createOpen, setCreateOpen] = React.useState(false);
   const [search, setSearch] = React.useState("");
 

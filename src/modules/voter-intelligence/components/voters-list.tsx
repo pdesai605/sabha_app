@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { useTranslation } from "@/lib/i18n/context";
+import { getVoters } from "@/lib/i18n/localized-demo-data";
 import { demoSuccess, demoExported, demoImported, demoPrinted, demoAssigned, demoWhatsAppSent, demoSaved, demoDeleted } from "@/lib/demo";
 import Link from "next/link";
 import {
@@ -39,7 +41,6 @@ import {
   applyVoterFilters,
   type VoterFilters,
 } from "@/modules/voter-intelligence/components/voter-filters-drawer";
-import { voters } from "@/modules/voter-intelligence/data/voter-data";
 import {
   formatVIDate,
   getPartyInclinationVariant,
@@ -72,6 +73,8 @@ function RowActions({ row }: { row: Voter }) {
 }
 
 export function VotersList() {
+  const { locale } = useTranslation();
+  const voters = React.useMemo(() => getVoters(locale), [locale]);
   const [search, setSearch] = React.useState("");
   const [page, setPage] = React.useState(1);
   const [pageSize, setPageSize] = React.useState(10);

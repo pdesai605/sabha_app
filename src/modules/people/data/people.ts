@@ -6,6 +6,16 @@ import type {
   PersonTimelineEvent,
 } from "@/modules/people/types";
 import { generateExtendedPeople } from "@/modules/party-members/data/generate-people-extended";
+import type { Locale } from "@/lib/i18n/types";
+import { getCurrentLocale } from "@/lib/i18n/locale-store";
+import {
+  localizePerson,
+  localizeTimelineEvent,
+  localizePersonDocument,
+  localizePersonNote,
+  localizePersonActivity,
+  localizeDemoText,
+} from "@/lib/i18n/demo-data-localize";
 
 const extendedPeople = generateExtendedPeople();
 
@@ -759,12 +769,17 @@ export const people: Person[] = [
   ...extendedPeople,
 ];
 
-export function getAllPeople(): Person[] {
-  return people;
+export function getAllPeople(locale?: Locale): Person[] {
+  const loc = locale ?? getCurrentLocale();
+  if (loc === "en") return people;
+  return people.map((p) => localizePerson(p, loc));
 }
 
-export function getPersonById(id: string): Person | undefined {
-  return people.find((p) => p.id === id);
+export function getPersonById(id: string, locale?: Locale): Person | undefined {
+  const person = people.find((p) => p.id === id);
+  if (!person) return undefined;
+  const loc = locale ?? getCurrentLocale();
+  return loc === "en" ? person : localizePerson(person, loc);
 }
 
 export const timelineEvents: PersonTimelineEvent[] = [
@@ -797,42 +812,51 @@ export const activities: PersonActivity[] = [
   { id: "a-004", personId: "p-001", action: "Created", user: "Admin User", timestamp: "2025-11-10T09:00:00" },
 ];
 
-export function getTimelineForPerson(personId: string): PersonTimelineEvent[] {
+export function getTimelineForPerson(personId: string, locale?: Locale): PersonTimelineEvent[] {
+  const loc = locale ?? getCurrentLocale();
   const specific = timelineEvents.filter((e) => e.personId === personId);
-  if (specific.length > 0) return specific;
+  if (specific.length > 0) {
+    return specific.map((e) => localizeTimelineEvent(e, loc));
+  }
 
-  const person = getPersonById(personId);
+  const person = getPersonById(personId, loc);
   if (!person) return [];
 
   return [
     {
       id: `gen-t-${personId}`,
       personId,
-      title: "Profile created",
-      description: `${person.fullName} was added to the people directory.`,
+      title: localizeDemoText("Profile created", loc),
+      description: localizeDemoText(`${people.find((p) => p.id === personId)?.fullName ?? person.fullName} was added to the people directory.`, loc),
       timestamp: person.createdAt,
       type: "update",
     },
     {
       id: `gen-t2-${personId}`,
       personId,
-      title: "Last interaction",
-      description: "Most recent office interaction recorded.",
+      title: localizeDemoText("Last interaction", loc),
+      description: localizeDemoText("Most recent office interaction recorded.", loc),
       timestamp: person.lastActivity,
       type: "visit",
     },
   ];
 }
 
-export function getDocumentsForPerson(personId: string): PersonDocument[] {
-  return documents.filter((d) => d.personId === personId);
+export function getDocumentsForPerson(personId: string, locale?: Locale): PersonDocument[] {
+  const loc = locale ?? getCurrentLocale();
+  return documents
+    .filter((d) => d.personId === personId)
+    .map((d) => localizePersonDocument(d, loc));
 }
 
-export function getNotesForPerson(personId: string): PersonNote[] {
+export function getNotesForPerson(personId: string, locale?: Locale): PersonNote[] {
+  const loc = locale ?? getCurrentLocale();
   const specific = notes.filter((n) => n.personId === personId);
-  if (specific.length > 0) return specific;
+  if (specific.length > 0) {
+    return specific.map((n) => localizePersonNote(n, loc));
+  }
 
-  const person = getPersonById(personId);
+  const person = getPersonById(personId, loc);
   if (!person?.notes) return [];
 
   return [
@@ -840,35 +864,38 @@ export function getNotesForPerson(personId: string): PersonNote[] {
       id: `gen-n-${personId}`,
       personId,
       content: person.notes,
-      author: "Admin User",
+      author: localizeDemoText("Admin User", loc),
       createdAt: person.updatedAt,
       pinned: true,
     },
   ];
 }
 
-export function getActivitiesForPerson(personId: string): PersonActivity[] {
+export function getActivitiesForPerson(personId: string, locale?: Locale): PersonActivity[] {
+  const loc = locale ?? getCurrentLocale();
   const specific = activities.filter((a) => a.personId === personId);
-  if (specific.length > 0) return specific;
+  if (specific.length > 0) {
+    return specific.map((a) => localizePersonActivity(a, loc));
+  }
 
-  const person = getPersonById(personId);
+  const person = getPersonById(personId, loc);
   if (!person) return [];
 
   return [
     {
       id: `gen-a-${personId}`,
       personId,
-      action: "Created",
-      user: "Admin User",
+      action: localizeDemoText("Created", loc),
+      user: localizeDemoText("Admin User", loc),
       timestamp: person.createdAt,
     },
     {
       id: `gen-a2-${personId}`,
       personId,
-      action: "Updated",
-      field: "Last activity",
-      newValue: "Recorded",
-      user: "System",
+      action: localizeDemoText("Updated", loc),
+      field: localizeDemoText("Last activity", loc),
+      newValue: localizeDemoText("Recorded", loc),
+      user: localizeDemoText("System", loc),
       timestamp: person.lastActivity,
     },
   ];

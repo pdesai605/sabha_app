@@ -24,7 +24,8 @@ import {
   FormField,
   FormActions,
 } from "@/components/forms/form-layout";
-import { getAllPeople } from "@/modules/people/data/people";
+import { useTranslation } from "@/lib/i18n/context";
+import { getAllPeople } from "@/lib/i18n/localized-demo-data";
 import type { Person } from "@/modules/people/types";
 import type { OrganizationType } from "@/modules/party-members/types";
 import {
@@ -38,6 +39,7 @@ import { WARDS, BOOTHS } from "@/modules/people/constants";
 
 export function AddPartyMemberForm() {
   const router = useRouter();
+  const { locale } = useTranslation();
   const searchParams = useSearchParams();
   const defaultOrg = (searchParams.get("org") as OrganizationType) || "party";
 
@@ -54,7 +56,7 @@ export function AddPartyMemberForm() {
   const [status, setStatus] = React.useState("active");
   const [createPersonOpen, setCreatePersonOpen] = React.useState(false);
 
-  const allPeople = getAllPeople();
+  const allPeople = React.useMemo(() => getAllPeople(locale), [locale]);
 
   const searchResults = React.useMemo(() => {
     if (!query || query.length < 2) return [];

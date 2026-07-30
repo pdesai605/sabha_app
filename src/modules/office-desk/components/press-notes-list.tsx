@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { useTranslation } from "@/lib/i18n/context";
+import { getPressNotes } from "@/lib/i18n/localized-demo-data";
 import { demoSuccess, demoExported, demoImported, demoPrinted, demoAssigned, demoWhatsAppSent, demoSaved, demoDeleted } from "@/lib/demo";
 import { Plus, FileText, Download, MoreHorizontal, Eye } from "lucide-react";
 import { toast } from "@/components/ui/sonner";
@@ -19,7 +21,6 @@ import {
   DataTable,
   type DataTableColumn,
 } from "@/components/data-table/data-table";
-import { pressNotes } from "@/modules/office-desk/data/office-data";
 import { formatOfficeDate } from "@/modules/office-desk/lib/utils";
 import type { PressNote } from "@/modules/office-desk/types";
 
@@ -30,6 +31,8 @@ const statusMap: Record<PressNote["status"], { label: string; status: "active" |
 };
 
 export function PressNotesList() {
+  const { locale } = useTranslation();
+  const pressNotes = React.useMemo(() => getPressNotes(locale), [locale]);
   const [search, setSearch] = React.useState("");
   const [page, setPage] = React.useState(1);
 

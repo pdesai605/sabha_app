@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import {
   Download,
   Printer,
@@ -12,26 +13,32 @@ import {
   PieChart,
   BarChart3,
 } from "lucide-react";
+import { useTranslation } from "@/lib/i18n/context";
+import { getExpenses, getExpenseCategories, getVendors } from "@/lib/i18n/localized-demo-data";
 import { toast } from "@/components/ui/sonner";
 import { demoSuccess, demoExported, demoImported, demoPrinted, demoAssigned, demoWhatsAppSent, demoSaved, demoDeleted } from "@/lib/demo";
 import { PageHeader } from "@/components/layout/page-header";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { expenses, expenseCategories, vendors } from "@/modules/expense-management/data/expense-data";
 import { formatCurrency } from "@/modules/expense-management/lib/utils";
 import { EXPENSE_MONTH } from "@/modules/expense-management/constants";
 
-const reports = [
-  { id: "category", title: "Category Report", description: "Expenditure breakdown by expense category.", icon: Tag, count: expenseCategories.length },
-  { id: "vendor", title: "Vendor Report", description: "Payments made to each registered vendor.", icon: Building2, count: vendors.length },
-  { id: "ward", title: "Ward Report", description: "Ward-wise expense allocation and spending.", icon: MapPin, count: 8 },
-  { id: "payment", title: "Payment Mode Report", description: "Cash, UPI, bank transfer, cheque, and card payments.", icon: CreditCard, count: 5 },
-  { id: "monthly", title: "Monthly Report", description: "Month-on-month expenditure summary.", icon: Calendar, count: 6 },
-  { id: "budget", title: "Budget Report", description: "Budget vs actual across all scopes.", icon: PieChart, count: 3 },
-];
-
 export function ExpenseReports() {
+  const { locale } = useTranslation();
+  const expenses = React.useMemo(() => getExpenses(locale), [locale]);
+  const expenseCategories = React.useMemo(() => getExpenseCategories(locale), [locale]);
+  const vendors = React.useMemo(() => getVendors(locale), [locale]);
+
+  const reports = [
+    { id: "category", title: "Category Report", description: "Expenditure breakdown by expense category.", icon: Tag, count: expenseCategories.length },
+    { id: "vendor", title: "Vendor Report", description: "Payments made to each registered vendor.", icon: Building2, count: vendors.length },
+    { id: "ward", title: "Ward Report", description: "Ward-wise expense allocation and spending.", icon: MapPin, count: 8 },
+    { id: "payment", title: "Payment Mode Report", description: "Cash, UPI, bank transfer, cheque, and card payments.", icon: CreditCard, count: 5 },
+    { id: "monthly", title: "Monthly Report", description: "Month-on-month expenditure summary.", icon: Calendar, count: 6 },
+    { id: "budget", title: "Budget Report", description: "Budget vs actual across all scopes.", icon: PieChart, count: 3 },
+  ];
+
   const monthlyTotal = expenses
     .filter((e) => e.date.startsWith(EXPENSE_MONTH))
     .reduce((s, e) => s + e.amount, 0);

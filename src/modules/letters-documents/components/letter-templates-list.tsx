@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { useTranslation } from "@/lib/i18n/context";
+import { getLetterTemplates } from "@/lib/i18n/localized-demo-data";
 import { demoSuccess, demoSaved } from "@/lib/demo";
 import { Plus, LayoutGrid, List, Copy, Eye, Pencil, Archive } from "lucide-react";
 import { PageHeader } from "@/components/layout/page-header";
@@ -14,7 +16,6 @@ import {
   type DataTableColumn,
 } from "@/components/data-table/data-table";
 import { DocumentEditorDialog } from "@/components/documents/document-editor-dialog";
-import { letterTemplates } from "@/modules/letters-documents/data/letters-data";
 import { formatLetterDate } from "@/modules/letters-documents/lib/utils";
 import { TEMPLATE_CATEGORIES } from "@/modules/letters-documents/constants";
 import type { LetterTemplate, TemplateCategory } from "@/modules/letters-documents/types";
@@ -22,6 +23,8 @@ import type { LetterTemplate, TemplateCategory } from "@/modules/letters-documen
 type ViewMode = "cards" | "table";
 
 export function LetterTemplatesList() {
+  const { locale } = useTranslation();
+  const letterTemplates = React.useMemo(() => getLetterTemplates(locale), [locale]);
   const [view, setView] = React.useState<ViewMode>("cards");
   const [category, setCategory] = React.useState<TemplateCategory | "all">("all");
   const [search, setSearch] = React.useState("");

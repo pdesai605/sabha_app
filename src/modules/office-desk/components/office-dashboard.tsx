@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
 import {
   Calendar,
@@ -23,13 +24,14 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { L } from "@/components/shared/localized";
+import { useTranslation } from "@/lib/i18n/context";
 import {
-  getDashboardStats,
   getTodayAppointments,
-  officeEvents,
-  officeTasks,
-  recentActivities,
-} from "@/modules/office-desk/data/office-data";
+  getOfficeEvents,
+  getOfficeTasks,
+  getOfficeRecentActivities,
+} from "@/lib/i18n/localized-demo-data";
+import { getDashboardStats } from "@/modules/office-desk/data/office-data";
 import { enrichAppointments, formatTime, formatOfficeDateTime, getAppointmentStatusVariant, getTaskStatusVariant } from "@/modules/office-desk/lib/utils";
 import { APPOINTMENT_STATUS_LABELS, TASK_STATUS_LABELS, OFFICE_TODAY } from "@/modules/office-desk/constants";
 
@@ -42,8 +44,12 @@ const quickActions = [
 ];
 
 export function OfficeDashboard() {
+  const { locale } = useTranslation();
   const stats = getDashboardStats();
-  const todaySchedule = enrichAppointments(getTodayAppointments()).sort((a, b) => a.time.localeCompare(b.time));
+  const todaySchedule = enrichAppointments(getTodayAppointments(locale)).sort((a, b) => a.time.localeCompare(b.time));
+  const officeEvents = React.useMemo(() => getOfficeEvents(locale), [locale]);
+  const officeTasks = React.useMemo(() => getOfficeTasks(locale), [locale]);
+  const recentActivities = React.useMemo(() => getOfficeRecentActivities(locale), [locale]);
   const upcomingEvents = officeEvents.filter((e) => e.date >= OFFICE_TODAY && e.status !== "completed").slice(0, 5);
   const recentTasks = officeTasks.filter((t) => t.status !== "completed").slice(0, 6);
 

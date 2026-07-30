@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
 import {
   Inbox,
@@ -22,14 +23,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { useTranslation } from "@/lib/i18n/context";
 import {
-  getDashboardStats,
   getRecentLetters,
   getPendingFileMovement,
   getRecentDispatch,
   getUpcomingDeadlines,
-  recentActivities,
-} from "@/modules/letters-documents/data/letters-data";
+  getLetterRecentActivities,
+} from "@/lib/i18n/localized-demo-data";
+import { getDashboardStats } from "@/modules/letters-documents/data/letters-data";
 import {
   formatLetterDate,
   formatLetterDateTime,
@@ -49,11 +51,13 @@ const quickActions = [
 ];
 
 export function LettersDashboard() {
+  const { locale } = useTranslation();
   const stats = getDashboardStats();
-  const recentLetters = getRecentLetters();
-  const pendingFiles = getPendingFileMovement();
-  const recentDispatch = getRecentDispatch();
-  const deadlines = getUpcomingDeadlines();
+  const recentLetters = React.useMemo(() => getRecentLetters(undefined, locale), [locale]);
+  const pendingFiles = React.useMemo(() => getPendingFileMovement(undefined, locale), [locale]);
+  const recentDispatch = React.useMemo(() => getRecentDispatch(undefined, locale), [locale]);
+  const deadlines = React.useMemo(() => getUpcomingDeadlines(undefined, locale), [locale]);
+  const recentActivities = React.useMemo(() => getLetterRecentActivities(locale), [locale]);
 
   return (
     <div className="space-y-8">

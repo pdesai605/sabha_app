@@ -1,9 +1,10 @@
 import type { PartyMember, PartyMemberWithPerson } from "@/modules/party-members/types";
 import { getPersonById } from "@/modules/people/data/people";
+import type { Locale } from "@/lib/i18n/types";
 import { format, parseISO } from "date-fns";
 
-export function enrichMember(member: PartyMember): PartyMemberWithPerson | null {
-  const person = getPersonById(member.personId);
+export function enrichMember(member: PartyMember, locale?: Locale): PartyMemberWithPerson | null {
+  const person = getPersonById(member.personId, locale);
   if (!person) return null;
 
   return {
@@ -17,9 +18,9 @@ export function enrichMember(member: PartyMember): PartyMemberWithPerson | null 
   };
 }
 
-export function enrichMembers(members: PartyMember[]): PartyMemberWithPerson[] {
+export function enrichMembers(members: PartyMember[], locale?: Locale): PartyMemberWithPerson[] {
   return members
-    .map(enrichMember)
+    .map((m) => enrichMember(m, locale))
     .filter((m): m is PartyMemberWithPerson => m !== null);
 }
 

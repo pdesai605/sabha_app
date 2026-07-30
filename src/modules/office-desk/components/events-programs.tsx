@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { useTranslation } from "@/lib/i18n/context";
+import { getOfficeEvents } from "@/lib/i18n/localized-demo-data";
 import { demoSuccess, demoExported, demoImported, demoPrinted, demoAssigned, demoWhatsAppSent, demoSaved, demoDeleted } from "@/lib/demo";
 import { Calendar, MapPin, Clock, LayoutGrid, List, Plus } from "lucide-react";
 import { toast } from "@/components/ui/sonner";
@@ -10,7 +12,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { officeEvents } from "@/modules/office-desk/data/office-data";
 import { formatOfficeDate, formatTime } from "@/modules/office-desk/lib/utils";
 import { cn } from "@/lib/utils";
 
@@ -27,6 +28,8 @@ import { EventScheduleDialog } from "@/modules/office-desk/components/event-sche
 import { L } from "@/components/shared/localized";
 
 export function EventsPrograms() {
+  const { locale } = useTranslation();
+  const officeEvents = React.useMemo(() => getOfficeEvents(locale), [locale]);
   const [view, setView] = React.useState<ViewMode>("list");
   const [createOpen, setCreateOpen] = React.useState(false);
   const sorted = [...officeEvents].sort((a, b) => a.date.localeCompare(b.date) || a.startTime.localeCompare(b.startTime));

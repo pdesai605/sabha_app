@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { useTranslation } from "@/lib/i18n/context";
+import { getDispatchRecords } from "@/lib/i18n/localized-demo-data";
 import { demoSuccess, demoExported, demoImported, demoPrinted, demoAssigned, demoWhatsAppSent, demoSaved, demoDeleted } from "@/lib/demo";
 import { Plus, Download, RefreshCw } from "lucide-react";
 import { toast } from "@/components/ui/sonner";
@@ -14,7 +16,6 @@ import {
   DataTableCard,
   type DataTableColumn,
 } from "@/components/data-table/data-table";
-import { dispatchRecords } from "@/modules/letters-documents/data/letters-data";
 import {
   formatLetterDate,
   getDispatchStatusVariant,
@@ -26,6 +27,8 @@ import { DispatchCreateDialog } from "@/modules/letters-documents/components/dis
 import { L } from "@/components/shared/localized";
 
 export function DispatchRegisterList() {
+  const { locale } = useTranslation();
+  const dispatchRecords = React.useMemo(() => getDispatchRecords(locale), [locale]);
   const [createOpen, setCreateOpen] = React.useState(false);
   const [search, setSearch] = React.useState("");
   const [page, setPage] = React.useState(1);

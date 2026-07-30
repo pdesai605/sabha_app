@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
@@ -13,7 +14,8 @@ import {
 import { FormLayout, FormSection, FormField } from "@/components/forms/form-layout";
 import { DemoFormDialog } from "@/components/shared/demo-form-dialog";
 import { AttachmentButton } from "@/components/shared/attachment-viewer-dialog";
-import { getAllPeople } from "@/modules/people/data/people";
+import { useTranslation } from "@/lib/i18n/context";
+import { getAllPeople } from "@/lib/i18n/localized-demo-data";
 import { DEPARTMENTS } from "@/modules/expense-management/constants";
 import { WARDS } from "@/modules/people/constants";
 
@@ -27,7 +29,8 @@ export function AppointmentCreateDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const people = getAllPeople().slice(0, 20);
+  const { locale } = useTranslation();
+  const people = React.useMemo(() => getAllPeople(locale).slice(0, 20), [locale]);
 
   return (
     <DemoFormDialog

@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
 import { Calendar, AlertCircle, Clock, ChevronRight } from "lucide-react";
 import { PageHeader } from "@/components/layout/page-header";
@@ -7,11 +8,14 @@ import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getFollowUps, VISITOR_DESK_TODAY } from "@/modules/visitor-desk/data/visits";
+import { useTranslation } from "@/lib/i18n/context";
+import { getFollowUps } from "@/lib/i18n/localized-demo-data";
+import { VISITOR_DESK_TODAY } from "@/modules/visitor-desk/data/visits";
 import { formatVisitDate } from "@/modules/visitor-desk/lib/utils";
 
 export function FollowUpCalendar() {
-  const allFollowUps = getFollowUps();
+  const { locale } = useTranslation();
+  const allFollowUps = React.useMemo(() => getFollowUps(locale), [locale]);
   const today = allFollowUps.filter((f) => f.status === "today");
   const upcoming = allFollowUps.filter((f) => f.status === "upcoming");
   const missed = allFollowUps.filter((f) => f.status === "missed");

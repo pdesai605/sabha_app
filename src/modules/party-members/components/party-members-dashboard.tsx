@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
 import {
   Users,
@@ -24,9 +25,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { useTranslation } from "@/lib/i18n/context";
+import { getPartyMembers } from "@/lib/i18n/localized-demo-data";
 import {
   getDashboardStats,
-  partyMembers,
   recentTransfers,
   recentRoleChanges,
 } from "@/modules/party-members/data/members";
@@ -34,11 +36,14 @@ import { enrichMembers, formatJoiningDate, getMemberStatusVariant } from "@/modu
 import { formatPersonDateTime } from "@/modules/people/lib/utils";
 
 export function PartyMembersDashboard() {
+  const { locale } = useTranslation();
+  const partyMembers = React.useMemo(() => getPartyMembers(locale), [locale]);
   const stats = getDashboardStats();
   const recentMembers = enrichMembers(
     [...partyMembers]
       .sort((a, b) => b.joiningDate.localeCompare(a.joiningDate))
-      .slice(0, 6)
+      .slice(0, 6),
+    locale
   );
 
   return (
@@ -118,7 +123,7 @@ export function PartyMembersDashboard() {
               <p className="px-6 py-8 text-sm text-text-muted text-center">No pending approvals</p>
             ) : (
               <ul className="divide-y divide-border-subtle">
-                {enrichMembers(partyMembers.filter((m) => m.status === "pending").slice(0, 5)).map((m) => (
+                {enrichMembers(partyMembers.filter((m) => m.status === "pending").slice(0, 5), locale).map((m) => (
                   <li key={m.id} className="flex items-center gap-3 px-6 py-3.5">
                     <div className="flex size-8 items-center justify-center rounded-input bg-semantic-warning-muted">
                       <ShieldCheck className="size-4 text-semantic-warning" />

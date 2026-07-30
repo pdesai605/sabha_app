@@ -37,7 +37,9 @@ import {
 } from "@/components/data-table/data-table";
 import type { VisitWithPerson } from "@/modules/visitor-desk/lib/utils";
 import { defaultVisitorDeskFilters } from "@/modules/visitor-desk/types";
-import { visits, VISITOR_DESK_TODAY } from "@/modules/visitor-desk/data/visits";
+import { useTranslation } from "@/lib/i18n/context";
+import { getVisits } from "@/lib/i18n/localized-demo-data";
+import { VISITOR_DESK_TODAY } from "@/modules/visitor-desk/data/visits";
 import {
   STATUS_LABELS,
   VISITOR_TYPE_LABELS,
@@ -117,12 +119,14 @@ export function VisitorRegister({
   filterToday = false,
   breadcrumbExtra,
 }: VisitorRegisterProps) {
+  const { locale } = useTranslation();
+  const visits = React.useMemo(() => getVisits(locale), [locale]);
   const baseVisits = React.useMemo(() => {
     const raw = filterToday
       ? visits.filter((v) => v.visitDate === VISITOR_DESK_TODAY)
       : visits;
-    return enrichVisits(raw);
-  }, [filterToday]);
+    return enrichVisits(raw, locale);
+  }, [filterToday, visits, locale]);
 
   const [search, setSearch] = React.useState("");
   const [selectedIds, setSelectedIds] = React.useState<Set<string>>(new Set());

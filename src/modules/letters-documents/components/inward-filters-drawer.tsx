@@ -20,7 +20,8 @@ import {
   INWARD_CATEGORIES,
   INWARD_STATUS_LABELS,
 } from "@/modules/letters-documents/constants";
-import { getAllPeople } from "@/modules/people/data/people";
+import { useTranslation } from "@/lib/i18n/context";
+import { getAllPeople } from "@/lib/i18n/localized-demo-data";
 import { cn } from "@/lib/utils";
 import type { LetterPriority, InwardStatus } from "@/modules/letters-documents/types";
 
@@ -71,9 +72,6 @@ function FilterGroup({
   );
 }
 
-const people = getAllPeople();
-const assigneeNames = [...new Set(people.slice(0, 30).map((p) => p.fullName))];
-
 interface InwardFiltersDrawerProps {
   filters: InwardFilters;
   onFiltersChange: (filters: InwardFilters) => void;
@@ -89,6 +87,11 @@ export function InwardFiltersDrawer({
   open,
   onOpenChange,
 }: InwardFiltersDrawerProps) {
+  const { locale } = useTranslation();
+  const assigneeNames = React.useMemo(() => {
+    const people = getAllPeople(locale);
+    return [...new Set(people.slice(0, 30).map((p) => p.fullName))];
+  }, [locale]);
   const [local, setLocal] = React.useState(filters);
 
   React.useEffect(() => {

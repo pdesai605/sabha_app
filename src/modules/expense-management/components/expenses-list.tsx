@@ -33,7 +33,8 @@ import {
   type SortDirection,
 } from "@/components/data-table/data-table";
 import { ExpenseFiltersDrawer } from "@/modules/expense-management/components/expense-filters-drawer";
-import { expenses } from "@/modules/expense-management/data/expense-data";
+import { useTranslation } from "@/lib/i18n/context";
+import { getExpenses } from "@/lib/i18n/localized-demo-data";
 import {
   formatCurrency,
   formatExpenseDate,
@@ -90,6 +91,8 @@ function applyFilters(list: Expense[], filters: ExpenseFilters): Expense[] {
 }
 
 export function ExpensesList() {
+  const { locale } = useTranslation();
+  const expenses = React.useMemo(() => getExpenses(locale), [locale]);
   const { role, currentPersonId } = useDemoRole();
   const [search, setSearch] = React.useState("");
   const [page, setPage] = React.useState(1);
@@ -149,7 +152,7 @@ export function ExpensesList() {
       });
     }
     return result;
-  }, [search, sortColumn, sortDirection, filters, role, currentPersonId]);
+  }, [expenses, search, sortColumn, sortDirection, filters, role, currentPersonId]);
 
   const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
 

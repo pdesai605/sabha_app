@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { useTranslation } from "@/lib/i18n/context";
+import { getOfficeContacts } from "@/lib/i18n/localized-demo-data";
 import { demoSuccess, demoExported, demoImported, demoPrinted, demoAssigned, demoWhatsAppSent, demoSaved, demoDeleted } from "@/lib/demo";
 import { Phone, Mail, MapPin, MoreHorizontal, Plus, Download } from "lucide-react";
 import { toast } from "@/components/ui/sonner";
@@ -17,7 +19,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { officeContacts } from "@/modules/office-desk/data/office-data";
 import { CONTACT_CATEGORIES } from "@/modules/office-desk/constants";
 import type { ContactCategory } from "@/modules/office-desk/types";
 
@@ -25,6 +26,8 @@ import { ContactCreateDialog } from "@/modules/office-desk/components/contact-cr
 import { L } from "@/components/shared/localized";
 
 export function OfficeContactsList() {
+  const { locale } = useTranslation();
+  const officeContacts = React.useMemo(() => getOfficeContacts(locale), [locale]);
   const [search, setSearch] = React.useState("");
   const [category, setCategory] = React.useState<ContactCategory | "all">("all");
   const [createOpen, setCreateOpen] = React.useState(false);

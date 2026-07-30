@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { useTranslation } from "@/lib/i18n/context";
+import { getCampaigns } from "@/lib/i18n/localized-demo-data";
 import { Plus, MapPin, Users, Target } from "lucide-react";
 import { PageHeader } from "@/components/layout/page-header";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
@@ -9,14 +11,13 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { campaigns } from "@/modules/voter-intelligence/data/voter-data";
 import { formatVIDate, getCampaignStatusVariant, getCoverageColor } from "@/modules/voter-intelligence/lib/utils";
 import { CAMPAIGN_STATUS_LABELS, CAMPAIGN_TYPES } from "@/modules/voter-intelligence/constants";
-import type { CampaignStatus, CampaignType } from "@/modules/voter-intelligence/types";
+import type { Campaign, CampaignStatus, CampaignType } from "@/modules/voter-intelligence/types";
 import { CampaignCreateDialog } from "@/modules/voter-intelligence/components/campaign-create-dialog";
 import { L } from "@/components/shared/localized";
 
-function CampaignCard({ campaign }: { campaign: typeof campaigns[0] }) {
+function CampaignCard({ campaign }: { campaign: Campaign }) {
   return (
     <Card className="hover:border-border-default transition-colors">
       <CardContent className="p-5">
@@ -51,6 +52,8 @@ function CampaignCard({ campaign }: { campaign: typeof campaigns[0] }) {
 }
 
 export function CampaignPlanning() {
+  const { locale } = useTranslation();
+  const campaigns = React.useMemo(() => getCampaigns(locale), [locale]);
   const [createOpen, setCreateOpen] = React.useState(false);
   const [typeFilter, setTypeFilter] = React.useState<CampaignType | "all">("all");
   const [statusFilter, setStatusFilter] = React.useState<CampaignStatus | "all">("all");

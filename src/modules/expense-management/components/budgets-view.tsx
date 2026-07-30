@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { useTranslation } from "@/lib/i18n/context";
+import { getBudgets } from "@/lib/i18n/localized-demo-data";
 import { PageHeader } from "@/components/layout/page-header";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,7 +19,6 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { budgets } from "@/modules/expense-management/data/expense-data";
 import { DEPARTMENTS } from "@/modules/expense-management/constants";
 import { WARDS } from "@/modules/people/constants";
 import {
@@ -68,6 +69,8 @@ function BudgetRow({ label, allocated, spent }: { label: string; allocated: numb
 }
 
 export function BudgetsView() {
+  const { locale } = useTranslation();
+  const budgets = React.useMemo(() => getBudgets(locale), [locale]);
   const [scope, setScope] = React.useState<BudgetScope>("category");
   const [filters, setFilters] = React.useState({
     year: "2026",

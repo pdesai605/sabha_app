@@ -1,6 +1,8 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { demoSuccess, demoExported, demoImported, demoPrinted, demoAssigned, demoWhatsAppSent, demoSaved, demoDeleted } from "@/lib/demo";
 import {
   Pencil,
@@ -28,8 +30,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
-import type { VisitWithPerson } from "@/modules/visitor-desk/lib/utils";
-import { getTimelineForVisit } from "@/modules/visitor-desk/data/visits";
+import { useTranslation } from "@/lib/i18n/context";
+import { getVisitById, getTimelineForVisit } from "@/lib/i18n/localized-demo-data";
+import { enrichVisit } from "@/modules/visitor-desk/lib/utils";
 import {
   formatVisitDate,
   formatVisitTime,
@@ -45,7 +48,7 @@ import {
 import { FileText as FileIcon, Image, Download } from "lucide-react";
 
 interface VisitDetailProps {
-  visit: VisitWithPerson;
+  visitId: string;
 }
 
 function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
@@ -57,8 +60,15 @@ function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
   );
 }
 
-export function VisitDetail({ visit }: VisitDetailProps) {
-  const timeline = getTimelineForVisit(visit.id);
+export function VisitDetail({ visitId }: VisitDetailProps) {
+  const { locale } = useTranslation();
+  const visit = React.useMemo(() => {
+    const raw = getVisitById(visitId, locale);
+    return raw ? enrichVisit(raw, locale) : null;
+  }, [visitId, locale]);
+  const timeline = React.useMemo(() => getTimelineForVisit(visitId, locale), [visitId, locale]);
+
+  if (!visit) notFound();
 
   return (
     <div className="space-y-6">

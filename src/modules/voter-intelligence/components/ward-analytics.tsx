@@ -1,14 +1,18 @@
 "use client";
 
+import * as React from "react";
 import { Users, MapPin, ClipboardList, AlertCircle, UserCheck, BarChart3 } from "lucide-react";
+import { useTranslation } from "@/lib/i18n/context";
+import { getWardAnalytics } from "@/lib/i18n/localized-demo-data";
 import { PageHeader } from "@/components/layout/page-header";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { wardAnalytics } from "@/modules/voter-intelligence/data/voter-data";
 import { getCoverageColor } from "@/modules/voter-intelligence/lib/utils";
 
 export function WardAnalyticsView() {
+  const { locale } = useTranslation();
+  const wardAnalytics = React.useMemo(() => getWardAnalytics(locale), [locale]);
   return (
     <div className="space-y-6">
       <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Voter Intelligence", href: "/voter-intelligence" }, { label: "Wards" }]} className="md:hidden" />
